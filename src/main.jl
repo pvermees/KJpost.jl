@@ -20,6 +20,12 @@ function updateTree!(tree::AbstractDict,
 end
 
 function TUIintchron(ctrl::AbstractDict)
+    P, D, d = atomic(ctrl["run"][ctrl["i"]],
+                     ctrl["channels"],
+                     ctrl["blank"],
+                     ctrl["par"])
     x0, y0 = internochron(P,D,d)
+    Plots.plot([0,x0],[y0,0])
+    Plots.plot!(P/D,d/D, seriestype=:scatter)
 end
 export TUIintchron

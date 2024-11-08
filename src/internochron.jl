@@ -18,7 +18,9 @@ function internochron(P::AbstractVector,
     y0i, slope = linear_regression(X,Y)
     x0i = -y0i/slope
     fit = Optim.optimize(misfit,[x0,y0])
-    [x0,y0] = Optim.minimizer(fit)
+    pars = Optim.minimizer(fit)
+    x0 = pars[1]
+    y0 = pars[2]
     return x0, y0
 end
 

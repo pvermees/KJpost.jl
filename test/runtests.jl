@@ -1,12 +1,8 @@
 using PTpost, Test, Infiltrator
 import Plasmatrace
 
-function ExtensionTest()
+function InternochronTest()
     Plasmatrace.PT(PTpost,logbook="test.log")
 end
 
-function InternochronTest()
-    Plasmatrace.PT(PTpost,logbook="internochron.log")
-end
-
-@testset "Extension test" begin ExtensionTest() end
+@testset "Internochron test" begin InternochronTest() end
