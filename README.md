@@ -21,10 +21,10 @@ Pkg.add(url="https://github.com/pvermees/PTpost.jl.git")
 ## Minimal working example
 
 ```
-julia> using Plasmatrace, PTgui
+julia> using Plasmatrace, PTpost
 julia> PT(PTpost)
 -------------------
- Plasmatrace 0.7.3
+ Plasmatrace 0.7.4
 -------------------
 
 r: Read data files[*]

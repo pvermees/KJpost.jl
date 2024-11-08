@@ -1,5 +1,3 @@
-using Infiltrator
-
 function extend!(_PT::AbstractDict)
 
     message = "i. Internal isochron\n" * _PT["tree"]["extra"].message
@@ -22,6 +20,6 @@ function updateTree!(tree::AbstractDict,
 end
 
 function TUIintchron(ctrl::AbstractDict)
-    print("I will carry out internal isochron regression")
+    x0, y0 = internochron(P,D,d)
 end
 export TUIintchron
