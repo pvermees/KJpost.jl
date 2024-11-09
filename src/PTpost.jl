@@ -1,6 +1,8 @@
 module PTpost
 
-import Plasmatrace
+import Plasmatrace, Statistics, Optim
+using Infiltrator
+
 include("main.jl")
 include("internochron.jl")
 
