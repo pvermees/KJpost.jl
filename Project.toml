@@ -5,6 +5,7 @@ version = "0.1.0"
 
 [deps]
 Infiltrator = "5903a43b-9cc3-4c30-8d17-598619ec4e9b"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Optim = "429524aa-4258-5aef-a3af-852621145aeb"
 Plasmatrace = "c976074e-2e5b-4ac6-9301-394412a2f0b0"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
@@ -14,6 +15,7 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
 Infiltrator = "1.8"
+LinearAlgebra = "1.11.0"
 Optim = "1.9.4"
 Plasmatrace = "0.7"
 Plots = "1.40.8"

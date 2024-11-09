@@ -1,7 +1,7 @@
 module PTpost
 
 import Plasmatrace, Statistics, Optim, Plots
-using Infiltrator
+using Infiltrator, LinearAlgebra
 
 include("main.jl")
 include("internochron.jl")
