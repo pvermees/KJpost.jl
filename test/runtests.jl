@@ -11,11 +11,10 @@ function InternochronTest()
     glass = Dict("NIST612" => "NIST612p")
     blk, fit = Plasmatrace.process!(myrun,method,channels,standards,glass,
                                     nblank=2,ndrift=2,ndown=2)
-    P, D, d = Plasmatrace.atomic(myrun[2],channels,blk,fit)
+    P, D, d = Plasmatrace.atomic(myrun[1],channels,blk,fit)
     x0, y0 = internochron(P,D,d)
-    p = Plots.plot(P/D,d/D,seriestype=:scatter)
-    Plots.plot!([0,x0],[y0,0])
-    display(p)
+    p = PTpost.plot(x0,y0,P,D,d)
+    @test display(p) != NaN
 end
 
 @testset "Internochron test" begin InternochronTest() end

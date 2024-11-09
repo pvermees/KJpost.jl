@@ -1,6 +1,6 @@
 module PTpost
 
-import Plasmatrace, Statistics, Optim
+import Plasmatrace, Statistics, Optim, Plots
 using Infiltrator
 
 include("main.jl")
