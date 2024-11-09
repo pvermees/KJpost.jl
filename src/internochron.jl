@@ -7,13 +7,25 @@ function get_fitted_PDd(x0,y0,P,D,d)
 end
 export get_fitted_PDd
 
-function plot(x0::AbstractFloat,
-              y0::AbstractFloat,
+function plot(x0,y0,E,
               P::AbstractVector,
               D::AbstractVector,
               d::AbstractVector)
-    p = Plots.plot(P./D,d./D,seriestype=:scatter,legend=false)
-    Plots.plot!([0,x0],[y0,0],legend=false)
+    nstep = 50
+    x = 0:x0/(nstep-1):x0
+    y = @. y0 - x*y0/x0
+    J = zeros(nstep,2)
+    J[:,1] = x.*y0/x0^2
+    J[:,2] = 1 .- x/x0
+    covmat = J * E * transpose(J)
+    sy = sqrt.(diag(covmat))
+    ul = y .+ 2*sy
+    ll = max.(y .- 2*sy,0)
+    cix = [x;reverse(x)]
+    ciy = [ul;reverse(ll)]
+    p = Plots.plot(Plots.Shape(cix,ciy),legend=false)
+    Plots.plot!(P./D,d./D,seriestype=:scatter,legend=false)
+    Plots.plot!([0,x0],[y0,0],seriescolor=:black,legend=false)
     Plots.xlabel!("P/D")
     Plots.ylabel!("d/D")
     return p
@@ -31,7 +43,6 @@ function internochron(P::AbstractVector,
         r = residuals(par)
         return sum(r.^2)
     end
-    
     X = P./D
     Y = d./D
     slope = (minimum(Y)-maximum(Y))/(maximum(X)-minimum(X))
@@ -45,9 +56,6 @@ function internochron(P::AbstractVector,
     s2 = misfit(pars)/(ns-2)
     J = ForwardDiff.jacobian(residuals,pars)
     E = s2 * inv(transpose(J) * J)
-    sx0 = sqrt(E[1,1])
-    sy0 = sqrt(E[2,2])
-    rho = E[1,2]/sqrt(E[1,1]*E[2,2])
-    return x0, sx0, y0, sy0, rho
+    return x0, y0, E
 end
 export internochron
