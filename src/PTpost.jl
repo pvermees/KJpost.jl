@@ -1,6 +1,6 @@
 module PTpost
 
-import Plasmatrace, Statistics, Optim, Plots, ForwardDiff
+import Plasmatrace, Statistics, Optim, Plots
 using Infiltrator, LinearAlgebra
 
 include("main.jl")
