@@ -25,8 +25,8 @@ function TUIinternochron(ctrl::AbstractDict)
                                  ctrl["channels"],
                                  ctrl["blank"],
                                  ctrl["par"])
-    x0, y0 = internochron(P,D,d)
-    Plots.plot([0,x0],[y0,0])
-    Plots.plot!(P/D,d/D, seriestype=:scatter)
+    x0, y0, E = internochron(P,D,d)
+    p = plot(x0,y0,E,P,D,d)
+    return p
 end
 export TUIinternochron

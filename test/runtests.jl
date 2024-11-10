@@ -1,6 +1,10 @@
 using PTpost, Test, Infiltrator, Plots
 import Plasmatrace
 
+function PTguiTest()
+    Plasmatrace.PT(PTpost;logbook="test.log")
+end
+
 function InternochronTest()
     myrun = Plasmatrace.load("Lu-Hf",instrument="Agilent")
     method = "Lu-Hf"
@@ -17,4 +21,5 @@ function InternochronTest()
     @test display(p) != NaN
 end
 
+@testset "PT test" begin PTguiTest() end
 @testset "Internochron test" begin InternochronTest() end
