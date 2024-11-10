@@ -4,10 +4,11 @@ function extend!(_PT::AbstractDict)
         
         extra_message = "i: Internal isochron\n" * _PT["tree"]["extra"].message
         extra_action = _PT["tree"]["extra"].action
-        extra_action["i"] = "internal_isochron"
+        extra_action["i"] = "internochron"
         updateTree!(_PT["tree"],"extra",
                     message = extra_message,
                     action = extra_action)
+        
         internochron_message =
             "p: Plot\n" *
             "e: Export\n" *
@@ -17,14 +18,14 @@ function extend!(_PT::AbstractDict)
             "Plot the internal isochron for a single laser spot " *
             "or export all the spots to a .csv file."
         internochron_action = Dict(
-            "p" => TUInternochron,
+            "p" => TUInternochronViewer!,
             "e" => TUInternochronExport
         )
-        updateTree!(_PT["tree"],"internal_isochron",
+        updateTree!(_PT["tree"],"internochron",
                     message = internochron_message,
                     help = internochron_help,
                     action = internochron_action)
-        
+
         view_message = 
             "n: Next\n"*
             "p: Previous\n"*
@@ -39,20 +40,52 @@ function extend!(_PT::AbstractDict)
         view_action = Dict(
             "n" => TUInternochron_next!,
             "p" => TUInternochron_previous!,
-            "g" => "internochron_goto",
-            "t" => TUItabulate
+            "g" => "internogoto",
+            "t" => Plasmatrace.TUItabulate
         )
+        updateTree!(_PT["tree"],"internoview",
+                    message = view_message,
+                    help = view_help,
+                    action = view_action)
+
+        goto_message =
+            "Enter the number of the sample to plot " *
+            "(? for help, x to exit):"
+        goto_help = "Jump to a specific analysis."
+        goto_action = TUInternochron_goto!
+        updateTree!(_PT["tree"],"internogoto",
+                    message = goto_message,
+                    help = goto_help,
+                    action = goto_action)
         
     end
 
 end
 export extend!
 
+function TUInternochronViewer!(ctrl::AbstractDict)
+    TUInternochron(ctrl)
+    return "internoview"
+end
+
 function TUInternochron_next!(ctrl::AbstractDict)
-    return "x"
+    ctrl["i"] += 1
+    if ctrl["i"]>length(ctrl["run"]) ctrl["i"] = 1 end
+    return TUInternochron(ctrl)
 end
 
 function TUInternochron_previous!(ctrl::AbstractDict)
+    ctrl["i"] -= 1
+    if ctrl["i"]<1 ctrl["i"] = length(ctrl["run"]) end
+    return TUInternochron(ctrl)
+end
+
+function TUInternochron_goto!(ctrl::AbstractDict,
+                              response::AbstractString)
+    ctrl["i"] = parse(Int,response)
+    if ctrl["i"]>length(ctrl["run"]) ctrl["i"] = 1 end
+    if ctrl["i"]<1 ctrl["i"] = length(ctrl["run"]) end
+    TUInternochron(ctrl)
     return "x"
 end
 
@@ -72,7 +105,7 @@ function TUInternochron(ctrl::AbstractDict)
     x0, y0, E = internochron(P,D,d)
     p = plot(x0,y0,E,P,D,d)
     display(p)
-    return "x"
+    return nothing
 end
 export TUIinternochron
 
