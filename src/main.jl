@@ -1,12 +1,30 @@
 function extend!(_PT::AbstractDict)
 
     if !haskey(_PT["tree"]["extra"].action,"i")
-        message = "i. Internal isochron\n" * _PT["tree"]["extra"].message
-        action = _PT["tree"]["extra"].action
-        action["i"] = TUIinternochron
+        
+        message1 = "i: Internal isochron\n" * _PT["tree"]["extra"].message
+        action1 = _PT["tree"]["extra"].action
+        action1["i"] = "internal_isochron"
         updateTree!(_PT["tree"],"extra",
-                    message = message,
-                    action = action)
+                    message = message1,
+                    action = action1)
+        message2 =
+            "p: Plot\n" *
+            "e: Export\n" *
+            "x: Exit\n" *
+            "?: Help"
+        help2 =
+            "Plot the internal isochron for a single laser spot " *
+            "or export all the spots to a .csv file."
+        action2 = Dict(
+            "p" => TUInternochron,
+            "e" => TUInternochronExport
+        )
+        updateTree!(_PT["tree"],"internal_isochron",
+                    message = message2,
+                    help = help2,
+                    action = action2)
+        
     end
 
 end
@@ -20,7 +38,7 @@ function updateTree!(tree::AbstractDict,
     tree[key] = (message=message,help=help,action=action)
 end
 
-function TUIinternochron(ctrl::AbstractDict)
+function TUInternochron(ctrl::AbstractDict)
     P, D, d = Plasmatrace.atomic(ctrl["run"][ctrl["i"]],
                                  ctrl["channels"],
                                  ctrl["blank"],
@@ -31,3 +49,6 @@ function TUIinternochron(ctrl::AbstractDict)
     return "x"
 end
 export TUIinternochron
+
+function TUInternochronExport(ctrl::AbstractDict)
+end
