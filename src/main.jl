@@ -2,33 +2,59 @@ function extend!(_PT::AbstractDict)
 
     if !haskey(_PT["tree"]["extra"].action,"i")
         
-        message1 = "i: Internal isochron\n" * _PT["tree"]["extra"].message
-        action1 = _PT["tree"]["extra"].action
-        action1["i"] = "internal_isochron"
+        extra_message = "i: Internal isochron\n" * _PT["tree"]["extra"].message
+        extra_action = _PT["tree"]["extra"].action
+        extra_action["i"] = "internal_isochron"
         updateTree!(_PT["tree"],"extra",
-                    message = message1,
-                    action = action1)
-        message2 =
+                    message = extra_message,
+                    action = extra_action)
+        internochron_message =
             "p: Plot\n" *
             "e: Export\n" *
             "x: Exit\n" *
             "?: Help"
-        help2 =
+        internochron_help =
             "Plot the internal isochron for a single laser spot " *
             "or export all the spots to a .csv file."
-        action2 = Dict(
+        internochron_action = Dict(
             "p" => TUInternochron,
             "e" => TUInternochronExport
         )
         updateTree!(_PT["tree"],"internal_isochron",
-                    message = message2,
-                    help = help2,
-                    action = action2)
+                    message = internochron_message,
+                    help = internochron_help,
+                    action = internochron_action)
+        
+        view_message = 
+            "n: Next\n"*
+            "p: Previous\n"*
+            "g: Go to\n"*
+            "t: Tabulate all the samples in the session\n"*
+            "x: Exit\n"*
+            "?: Help"
+        view_help =
+            "It is useful to view the outcome of the internal isochron "*
+            "regression to ensure that the results are sensible and that the "*
+            "algorithm did not get stuck in a local minimum."
+        view_action = Dict(
+            "n" => TUInternochron_next!,
+            "p" => TUInternochron_previous!,
+            "g" => "internochron_goto",
+            "t" => TUItabulate
+        )
         
     end
 
 end
 export extend!
+
+function TUInternochron_next!(ctrl::AbstractDict)
+    return "x"
+end
+
+function TUInternochron_previous!(ctrl::AbstractDict)
+    return "x"
+end
 
 function updateTree!(tree::AbstractDict,
                      key::AbstractString;
