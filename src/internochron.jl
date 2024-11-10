@@ -60,6 +60,8 @@ function plot(x0,y0,E,
               ylim = [0,maximum([d./D;y0+sqrt(E[2,2])])],
               legend = false,
               nsigma = 2,
+              xlab = "P/D",
+              ylab = "d/D",
               plot_options...)
     nstep = 50
     x = range(xlim[1],xlim[2],nstep)
@@ -70,10 +72,10 @@ function plot(x0,y0,E,
     covmat = J * E * transpose(J)
     sy = sqrt.(diag(covmat))
     p = Plots.plot(x,y,ribbon=nsigma*sy;legend=legend,xlim=xlim,ylim=ylim,plot_options...)
-    Plots.plot!(P./D,d./D;seriestype=:scatter,legend=legend,plot_options...)
     Plots.plot!([0,x0],[y0,0];seriescolor=:black,legend=legend)
-    Plots.xlabel!("P/D")
-    Plots.ylabel!("d/D")
+    Plots.plot!(P./D,d./D;seriestype=:scatter,legend=legend,plot_options...)
+    Plots.xlabel!(xlab)
+    Plots.ylabel!(ylab)
     return p
 end
 export plot
