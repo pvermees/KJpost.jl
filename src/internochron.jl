@@ -56,7 +56,11 @@ function plot(x0,y0,E,
               P::AbstractVector,
               D::AbstractVector,
               d::AbstractVector;
-              xlim=[0,x0+sqrt(E[1,1])])
+              xlim = [0,maximum([P./D;x0+sqrt(E[1,1])])],
+              ylim = [0,maximum([d./D;y0+sqrt(E[2,2])])],
+              legend = false,
+              nsigma = 2,
+              plot_options...)
     nstep = 50
     x = range(xlim[1],xlim[2],nstep)
     y = @. y0 - x*y0/x0
@@ -65,13 +69,9 @@ function plot(x0,y0,E,
     J[:,2] = 1 .- x/x0
     covmat = J * E * transpose(J)
     sy = sqrt.(diag(covmat))
-    ul = y .+ 2*sy
-    ll = max.(y .- 2*sy,0)
-    cix = [x;reverse(x)]
-    ciy = [ul;reverse(ll)]
-    p = Plots.plot(Plots.Shape(cix,ciy),legend=false)
-    Plots.plot!(P./D,d./D,seriestype=:scatter,legend=false)
-    Plots.plot!([0,x0],[y0,0],seriescolor=:black,legend=false)
+    p = Plots.plot(x,y,ribbon=nsigma*sy;legend=legend,xlim=xlim,ylim=ylim,plot_options...)
+    Plots.plot!(P./D,d./D;seriestype=:scatter,legend=legend,plot_options...)
+    Plots.plot!([0,x0],[y0,0];seriescolor=:black,legend=legend)
     Plots.xlabel!("P/D")
     Plots.ylabel!("d/D")
     return p
