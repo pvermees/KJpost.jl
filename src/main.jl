@@ -27,6 +27,7 @@ function TUIinternochron(ctrl::AbstractDict)
                                  ctrl["par"])
     x0, y0, E = internochron(P,D,d)
     p = plot(x0,y0,E,P,D,d)
-    return p
+    display(p)
+    return "x"
 end
 export TUIinternochron
