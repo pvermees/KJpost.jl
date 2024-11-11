@@ -82,7 +82,8 @@ export plot
 
 function internochron(P::AbstractVector,
                       D::AbstractVector,
-                      d::AbstractVector)
+                      d::AbstractVector;
+                      numerical::Bool=true)
     function residuals(par)
         Pf, Df, df = get_fitted_PDd(par[1],par[2],P,D,d)
         return [Pf.-P;Df.-D;df.-d]
@@ -102,10 +103,14 @@ function internochron(P::AbstractVector,
     y0 = pars[2]
     ns = length(P)
     s2 = misfit(pars)/(ns-2)
-    s2 = misfit(pars)/(ns-2)
-    J = jacobian(pars,P,D,d)
-    covmat = s2 * inv(transpose(J)*J)
-    E = covmat[1:2,1:2]
+    if numerical
+        J = ForwardDiff.jacobian(residuals,pars)
+        E = s2 * inv(transpose(J) * J)
+    else
+        J = jacobian(pars,P,D,d)
+        covmat = s2 * inv(transpose(J)*J)
+        E = covmat[1:2,1:2]
+    end
     return x0, y0, E
 end
 export internochron
