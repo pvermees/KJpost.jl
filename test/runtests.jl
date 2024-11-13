@@ -10,7 +10,7 @@ function InternochronTest()
     channels = Dict("d"=>"Hf178 -> 260",
                     "D"=>"Hf176 -> 258",
                     "P"=>"Lu175 -> 175")
-    standards = Dict("Hogsbo" => "hogsbo")
+    standards = Dict("Hogsbo_gt" => "hogsbo")
     glass = Dict("NIST612" => "NIST612p")
     blk, fit = process!(myrun,method,channels,standards,glass,
                                     nblank=2,ndrift=2,ndown=2)
