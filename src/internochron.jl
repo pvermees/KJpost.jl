@@ -78,7 +78,44 @@ function plot(x0,y0,E,
     Plots.ylabel!(ylab)
     return p
 end
+function plot(x0,y0,E,
+              P::AbstractVector,
+              D::AbstractVector,
+              d::AbstractVector,
+              method::AbstractString;
+              xlim = [0,1.05*maximum([P./D;x0+sqrt(E[1,1])])],
+              ylim = [0,1.05*maximum([d./D;y0+sqrt(E[2,2])])],
+              legend = false,
+              nsigma = 2,
+              plot_options...)
+    t,st = x02t(x0,sqrt(E[1,1]),method)
+    Pname,Dname,dname = Plasmatrace.getPDd(method)
+    xlab = Pname * "/" * Dname
+    ylab = dname * "/" * Dname
+    p = PTpost.plot(x0,y0,E,P,D,d;
+                    xlim=xlim,ylim=ylim,legend=legend,nsigma=nsigma,
+                    xlab=xlab,ylab=ylab,plot_options...)
+    sdig = 2
+    tdig = ceil(Int,log10(t/st)) + sdig
+    tstring = "t = " *
+        string(round(t,sigdigits=tdig)) * "+/-" *
+        string(round(st,sigdigits=sdig)) * "Ma"
+    Plots.annotate!(Plots.xlims(p)[2],
+                    Plots.ylims(p)[2],
+                    Plots.text(tstring,:right))
+end
 export plot
+
+function x02t(x0::AbstractFloat,
+              sx0::AbstractFloat,
+              method::AbstractString)
+    lambda = Plasmatrace._PT["lambda"][method][1]
+    R = 1/x0
+    sR = R * sx0/x0
+    t = log(1+R)/lambda
+    st = (sR/(1+R))/lambda
+    return t,st
+end
 
 function internochron(P::AbstractVector,
                       D::AbstractVector,
