@@ -107,8 +107,21 @@ function plot(x0,y0,E,
     Plots.annotate!(Plots.xlims(p)[2],
                     Plots.ylims(p)[2],
                     Plots.text(tstring,:right))
+    if method=="U-Pb"
+        add_concordia_line(x0,y0)
+    end
 end
 export plot
+
+function add_concordia_line(x0,y0)
+    L5, L8, U58 = UPb_helper()
+    tmin = @. log(1+1/x0)/L8
+    tmax = 4000
+    t = range(tmin[1],tmax;step=50)
+    x = @. 1/(exp(L8*t)-1)
+    y = @. U58*(exp(L5*t)-1)/(exp(L8*t)-1)
+    Plots.plot!(x,y)
+end
 
 function x02t(x0::AbstractFloat,
               sx0::AbstractFloat,
@@ -121,14 +134,19 @@ function x02t(x0::AbstractFloat,
     return t,st
 end
 
+function UPb_helper()
+    L5 = Plasmatrace._PT["lambda"]["U235-Pb207"][1]
+    L8 = Plasmatrace._PT["lambda"]["U238-Pb206"][1]
+    fUPb = Plasmatrace._PT["iratio"]["U-Pb"]
+    U58 = fUPb.U235/fUPb.U238
+    return L5, L8, U58
+end
+
 function x0y02t(x0::AbstractFloat,
                 y0::AbstractFloat,
                 E::Matrix)
     function misfit(t)
-        L5 = Plasmatrace._PT["lambda"]["U235-Pb207"][1]
-        L8 = Plasmatrace._PT["lambda"]["U238-Pb206"][1]
-        fUPb = Plasmatrace._PT["iratio"]["U-Pb"]
-        U58 = fUPb.U235/fUPb.U238
+        L5, L8, U58 = UPb_helper()
         x = @. 1/(exp(L8*t)-1)
         y = @. U58*(exp(L5*t)-1)/(exp(L8*t)-1)
         yl = @. y0*(1-x/x0)
