@@ -88,7 +88,11 @@ function plot(x0,y0,E,
               legend = false,
               nsigma = 2,
               plot_options...)
-    t,st = x02t(x0,sqrt(E[1,1]),method)
+    if method=="U-Pb"
+        t,st = x0y02t(x0,y0,E)
+    else
+        t,st = x02t(x0,sqrt(E[1,1]),method)
+    end
     Pname,Dname,dname = Plasmatrace.getPDd(method)
     xlab = Pname * "/" * Dname
     ylab = dname * "/" * Dname
@@ -114,6 +118,25 @@ function x02t(x0::AbstractFloat,
     sR = R * sx0/x0
     t = log(1+R)/lambda
     st = (sR/(1+R))/lambda
+    return t,st
+end
+
+function x0y02t(x0::AbstractFloat,
+                y0::AbstractFloat,
+                E::Matrix)
+    function misfit(t)
+        L5 = Plasmatrace._PT["lambda"]["U235-Pb207"][1]
+        L8 = Plasmatrace._PT["lambda"]["U238-Pb206"][1]
+        fUPb = Plasmatrace._PT["iratio"]["U-Pb"]
+        U58 = fUPb.U235/fUPb.U238
+        x = @. 1/(exp(L8*t)-1)
+        y = @. U58*(exp(L5*t)-1)/(exp(L8*t)-1)
+        yl = @. y0*(1-x/x0)
+        return sum(@. (yl - y)^2)
+    end
+    fit = Optim.optimize(misfit,[1.0])
+    t = Optim.minimizer(fit)[1]
+    st = 0.1
     return t,st
 end
 
