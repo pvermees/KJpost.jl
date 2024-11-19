@@ -5,5 +5,6 @@ using Infiltrator, LinearAlgebra
 
 include("main.jl")
 include("internochron.jl")
+include("internoplot.jl")
 
 end
