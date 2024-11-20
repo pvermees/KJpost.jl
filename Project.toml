@@ -1,10 +1,12 @@
 name = "PTpost"
 uuid = "fc90fd96-6e6c-4a3a-af7d-ae5327881005"
 authors = ["pvermees <p.vermeesch@ucl.ac.uk>"]
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+Gtk4 = "9db2cae5-386f-4011-9d63-a5602296539b"
 Infiltrator = "5903a43b-9cc3-4c30-8d17-598619ec4e9b"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Optim = "429524aa-4258-5aef-a3af-852621145aeb"
@@ -13,3 +15,7 @@ Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[compat]
+DataFrames = "1.7.0"
+Gtk4 = "0.5.0"

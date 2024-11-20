@@ -85,8 +85,30 @@ function internochron(P::AbstractVector,
     end
     return x0, y0, E
 end
+function internochron(run::Vector{Plasmatrace.Sample},
+                      method::AbstractString,
+                      channels::AbstractDict,
+                      blank::AbstractDataFrame,
+                      pars::NamedTuple;
+                      numerical::Bool=true)
+    for samp in run
+        P, D, d = Plasmatrace.atomic(samp,channels,blank,pars)
+        x0, y0, E = internochron(P,D,d;numerical=numerical)
+        
+    end
+end
 export internochron
 
+function x0y02t(x0::AbstractFloat,
+                y0::AbstractFloat,
+                E::Matrix,
+                method::AbstractString)
+    if method == "U-Pb"
+        return x0y02t(x0,y0,E)
+    else
+        return x02t(x0,y0,E,method)
+    end
+end
 function x02t(x0::AbstractFloat,
               sx0::AbstractFloat,
               method::AbstractString)
@@ -97,7 +119,6 @@ function x02t(x0::AbstractFloat,
     st = (sR/(1+R))/lambda
     return t,st
 end
-
 function x0y02t(x0::AbstractFloat,
                 y0::AbstractFloat,
                 E::Matrix)

@@ -34,11 +34,7 @@ function plot(x0,y0,E,
               legend = false,
               nsigma = 2,
               plot_options...)
-    if method=="U-Pb"
-        t,st = x0y02t(x0,y0,E)
-    else
-        t,st = x02t(x0,sqrt(E[1,1]),method)
-    end
+    t,st = x0y02t(x0,y0,E,method)
     Pname,Dname,dname = Plasmatrace.getPDd(method)
     xlab = Pname * "/" * Dname
     ylab = dname * "/" * Dname
