@@ -131,7 +131,7 @@ end
 export TUInternochronExport
 
 function GUIinternochronExport(ctrl::AbstractDict)
-    save_dialog("Choose a csv file name",ctrl["gui"]) do fname
+    Gtk4.save_dialog("Choose a csv file name",ctrl["gui"]) do fname
         @async internochron2csv(ctrl,fname)
     end
     return "xx"
