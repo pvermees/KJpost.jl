@@ -51,7 +51,7 @@ function CSVtest()
     CSV.write("internochron.csv",tab)
 end
 
-#@testset "PT test" begin PTguiTest() end
+@testset "PT test" begin PTguiTest() end
 #@testset "Internochron test" begin InternochronTest() end
 #@testset "UPb test" begin UPbTest() end
-@testset "CSV test" begin CSVtest() end
+#@testset "CSV test" begin CSVtest() end

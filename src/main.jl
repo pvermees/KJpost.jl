@@ -139,5 +139,11 @@ end
 
 function internochron2csv(ctrl::AbstractDict,
                           fname::AbstractString)
-    print("I will export csv files")
+    tab = PTpost.internochron(ctrl["run"],
+                              ctrl["method"],
+                              ctrl["channels"],
+                              ctrl["blank"],
+                              ctrl["par"])
+    CSV.write(fname,tab)
+    return "xx"
 end

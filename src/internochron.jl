@@ -112,7 +112,7 @@ function x0y02t(x0::AbstractFloat,
     if method == "U-Pb"
         return x0y02t(x0,y0,E)
     else
-        return x02t(x0,y0,E,method)
+        return x02t(x0,sqrt(E[1,1]),method)
     end
 end
 function x02t(x0::AbstractFloat,
