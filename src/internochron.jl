@@ -91,11 +91,17 @@ function internochron(run::Vector{Plasmatrace.Sample},
                       blank::AbstractDataFrame,
                       pars::NamedTuple;
                       numerical::Bool=true)
-    for samp in run
+    ns = length(run)
+    out = DataFrame(t=fill(0.0,ns),st=fill(0.0,ns),
+                    y0=fill(0.0,ns),sy0=fill(0.0,ns))
+    for (i, samp) in enumerate(run)
         P, D, d = Plasmatrace.atomic(samp,channels,blank,pars)
         x0, y0, E = internochron(P,D,d;numerical=numerical)
-        
+        out.t[i], out.st[i] = x0y02t(x0,y0,E,method)
+        out.y0[i] = y0
+        out.sy0[i] = sqrt(E[2,2])
     end
+    return out
 end
 export internochron
 
