@@ -86,3 +86,53 @@ function internochron(P::AbstractVector,
     return x0, y0, E
 end
 export internochron
+
+function x02t(x0::AbstractFloat,
+              sx0::AbstractFloat,
+              method::AbstractString)
+    lambda = Plasmatrace._PT["lambda"][method][1]
+    R = 1/x0
+    sR = R * sx0/x0
+    t = log(1+R)/lambda
+    st = (sR/(1+R))/lambda
+    return t,st
+end
+
+function x0y02t(x0::AbstractFloat,
+                y0::AbstractFloat,
+                E::Matrix)
+    L5, L8, U58 = UPb_helper()
+    function misfit(par)
+        t = par[1]
+        x = 1/(exp(L8*t)-1)
+        y = U58*(exp(L5*t)-1)/(exp(L8*t)-1)
+        yl = y0*(1-x/x0)
+        return (yl - y)^2
+    end
+    init = log(1+1/x0)/L8
+    fit = Optim.optimize(misfit,[init])
+    t = Optim.minimizer(fit)[1]
+    J = TWjacobian(t,x0,y0,E)
+    covmat = J * E * transpose(J)
+    st = sqrt(covmat[1,1])
+    return t,st
+end
+
+function TWjacobian(t,x0,y0,E)
+    L5, L8, U58 = UPb_helper()
+    dfdx0 = -y0/x0^2
+    dfdy0 = 1/x0 - exp(L8*t) + 1 
+    dfdt = U58*L5*exp(L5*t) - L8*y0*exp(L8*t)
+    dtdx0 = -dfdx0/dfdt
+    dtdy0 = -dfdy0/dfdt
+    J = hcat(dtdx0,dtdy0)
+    return J
+end
+
+function UPb_helper()
+    L5 = Plasmatrace._PT["lambda"]["U235-Pb207"][1]
+    L8 = Plasmatrace._PT["lambda"]["U238-Pb206"][1]
+    fUPb = Plasmatrace._PT["iratio"]["U-Pb"]
+    U58 = fUPb.U235/fUPb.U238
+    return L5, L8, U58
+end
