@@ -1,13 +1,18 @@
-function get_pDf(x0,y0,P,D,d)
-    p = @. ((d*x0^2+d)*y0+D*x0^2-P*x0)/((P*x0+D)*y0^2+d*y0*x0^2+D*x0^2)
-    Df = @. ((P*x0+D)*y0^2+d*y0*x0^2+D*x0^2)/((x0^2+1)*y0^2+x0^2)
-    return p, Df
+function get_pS(x0,y0,P,D,d)
+    p = @. ((d*x0^2+d)*y0+D*x0^2-P*x0)/((P*x0+D)*y0^2+d*x0^2*y0+D*x0^2)
+    S = @. (((d+P)*x0^2+(P+D)*x0+d+D)*y0^2+
+            ((d+D)*x0^2+((-d)-P)*x0)*y0+(P+D)*x0^2)/((x0^2+1)*y0^2+x0^2)
+    return p, S
 end
 
 function get_fitted_PDd(x0,y0,P,D,d)
-    p, Df = get_pDf(x0,y0,P,D,d)
-    Pf = @. Df*x0*(1-p)
-    df = @. Df*y0*p
+    p, S = get_pS(x0,y0,P,D,d)
+    x = @. x0*(1-p)
+    y = @. y0*p
+    z = @. 1+x+y
+    Pf = @. S*x/z
+    Df = @. S/z
+    df = @. S*y/z
     return Pf, Df, df
 end
 export get_fitted_PDd
@@ -16,46 +21,30 @@ function jacobian(pars,P,D,d)
     ns = length(P)
     x0 = pars[1]
     y0 = pars[2]
-    p, Df = get_pDf(x0,y0,P,D,d)
-    ddPdx0 = @. Df*(1-p)
-    ddPdy0 = 0
-    ddPdp = -Df.*x0
-    ddPdDf = @. x0*(1-p)
-    ddDdx0 = fill(0,ns)
-    ddDdy0 = fill(0,ns)
-    ddDdp = fill(0,ns)
-    ddDdDf = fill(1,ns)
-    ddddx0 = fill(0,ns)
-    ddddy0 = Df.*p
-    ddddp = Df.*y0
-    ddddDf = y0.*p
-    J = zeros(3*ns,2*(ns+1))
-    iP = 1:ns
-    iD = ns+1:2*ns
-    id = 2*ns+1:3*ns
-    jx0 = 1
-    jy0 = 2
-    jp = 3:2+ns
-    jDf = 3+ns:2+2*ns
-    J[iP,jx0] .= ddPdx0
-    J[iP,jy0] .= ddPdy0
-    J[iP,jp] .= diagm(ddPdp)
-    J[iP,jDf] .= diagm(ddPdDf)
-    J[iD,jx0] .= ddDdx0
-    J[iD,jy0] .= ddDdy0
-    J[iD,jp] .= diagm(ddDdp)
-    J[iD,jDf] .= diagm(ddDdDf)
-    J[id,jx0] .= ddddx0
-    J[id,jy0] .= ddddy0
-    J[id,jp] .= diagm(ddddp)
-    J[id,jDf] .= diagm(ddddDf)
+    p, S = get_pS(x0,y0,P,D,d)
+    x = @. x0*(1-p)
+    y = @. y0*p
+    z = @. 1+x+y
+    J = zeros(2+2*ns,3*ns)
+    J[1,1:ns] = @. S*(1-p)/z - (S*x0*(1-p)^2)/z^2                    # dPdx0
+    J[1,ns+1:2*ns] = @. -S*(1-p)/z^2                                 # dDdx0
+    J[1,2*ns+1:3*ns] = @. -S*p*(1-p)*y0/z^2                          # dddx0
+    J[2,1:ns] = @. -S*p*(1-p)*x0/z^2                                 # dPdy0
+    J[2,ns+1:2*ns] = @. -S*p/z^2                                     # dDdy0
+    J[2,2*ns+1:3*ns] = @. S*p/z - (S*y0*p^2)/z^2                     # dddy0
+    J[3:ns+2,1:ns] = diagm(@. x0*(1-p)/z)                            # dPdS
+    J[3:ns+2,ns+1:2*ns] = diagm(@. 1/z)                              # dDdS
+    J[3:ns+2,2*ns+1:3*ns] = diagm(@. p*y0/z)                         # dddS
+    J[ns+3:end,1:ns] = diagm(@. -S*x0/z - S*(1-p)*x0*(y0-x0)/z^2)    # dPdp
+    J[ns+3:end,ns+1:2*ns] = diagm(@. -S*(y0-x0)/z^2)                 # dDdp
+    J[ns+3:end,2*ns+1:3*ns] = diagm(@. S*y0/z - S*p*y0*(y0-x0)/z^2) # dddp
     return J
 end
 
 function internochron(P::AbstractVector,
                       D::AbstractVector,
                       d::AbstractVector;
-                      numerical::Bool=true)
+                      numerical::Bool=false)
     function residuals(par)
         Pf, Df, df = get_fitted_PDd(par[1],par[2],P,D,d)
         return [Pf.-P;Df.-D;df.-d]
@@ -80,7 +69,7 @@ function internochron(P::AbstractVector,
         E = s2 * inv(transpose(J) * J)
     else
         J = jacobian(pars,P,D,d)
-        covmat = s2 * inv(transpose(J)*J)
+        covmat = s2 * inv(J*transpose(J))
         E = covmat[1:2,1:2]
     end
     return x0, y0, E

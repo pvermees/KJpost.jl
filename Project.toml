@@ -1,7 +1,7 @@
 name = "PTpost"
 uuid = "fc90fd96-6e6c-4a3a-af7d-ae5327881005"
 authors = ["pvermees <p.vermeesch@ucl.ac.uk>"]
-version = "0.1.2"
+version = "0.2.0"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
