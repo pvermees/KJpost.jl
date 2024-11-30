@@ -1,13 +1,13 @@
-function extend!(_PT::AbstractDict)
+function extend!(_KJ::AbstractDict)
 
-    if haskey(_PT["tree"]["extra"].action,"i")
+    if haskey(_KJ["tree"]["extra"].action,"i")
         return # already added
     end
         
-    extra_message = "i: Internal isochron\n" * _PT["tree"]["extra"].message
-    extra_action = _PT["tree"]["extra"].action
+    extra_message = "i: Internal isochron\n" * _KJ["tree"]["extra"].message
+    extra_action = _KJ["tree"]["extra"].action
     extra_action["i"] = "internochron"
-    updateTree!(_PT["tree"],"extra",
+    updateTree!(_KJ["tree"],"extra",
                 message = extra_message,
                 action = extra_action)
     
@@ -23,7 +23,7 @@ function extend!(_PT::AbstractDict)
         "p" => TUInternochronViewer!,
         "e" => TUInternochronExport
     )
-    updateTree!(_PT["tree"],"internochron",
+    updateTree!(_KJ["tree"],"internochron",
                 message = internochron_message,
                 help = internochron_help,
                 action = internochron_action)
@@ -43,9 +43,9 @@ function extend!(_PT::AbstractDict)
         "n" => TUInternochron_next!,
         "p" => TUInternochron_previous!,
         "g" => "internogoto",
-        "t" => Plasmatrace.TUItabulate
+        "t" => KJ.TUItabulate
     )
-    updateTree!(_PT["tree"],"internoview",
+    updateTree!(_KJ["tree"],"internoview",
                 message = view_message,
                 help = view_help,
                 action = view_action)
@@ -55,7 +55,7 @@ function extend!(_PT::AbstractDict)
         "(? for help, x to exit):"
     goto_help = "Jump to a specific analysis."
     goto_action = TUInternochron_goto!
-    updateTree!(_PT["tree"],"internogoto",
+    updateTree!(_KJ["tree"],"internogoto",
                 message = goto_message,
                 help = goto_help,
                 action = goto_action)
@@ -67,7 +67,7 @@ function extend!(_PT::AbstractDict)
         "Provide the file name with or without " *
         "the .csv extension."
     csv_action = internochron2csv
-    updateTree!(_PT["tree"],"internochron2csv",
+    updateTree!(_KJ["tree"],"internochron2csv",
                 message = csv_message,
                 help = csv_help,
                 action = csv_action)
@@ -110,10 +110,10 @@ function updateTree!(tree::AbstractDict,
 end
 
 function TUInternochron(ctrl::AbstractDict)
-    P, D, d = Plasmatrace.atomic(ctrl["run"][ctrl["i"]],
-                                 ctrl["channels"],
-                                 ctrl["blank"],
-                                 ctrl["par"])
+    P, D, d = KJ.atomic(ctrl["run"][ctrl["i"]],
+                        ctrl["channels"],
+                        ctrl["blank"],
+                        ctrl["par"])
     x0, y0, E = internochron(P,D,d)
     p = plot(x0,y0,E,P,D,d)
     display(p)
@@ -139,7 +139,7 @@ end
 
 function internochron2csv(ctrl::AbstractDict,
                           fname::AbstractString)
-    tab = PTpost.internochron(ctrl["run"],
+    tab = KJpost.internochron(ctrl["run"],
                               ctrl["method"],
                               ctrl["channels"],
                               ctrl["blank"],

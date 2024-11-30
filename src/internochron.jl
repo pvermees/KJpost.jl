@@ -74,7 +74,7 @@ function internochron(P::AbstractVector,
     end
     return x0, y0, E
 end
-function internochron(run::Vector{Plasmatrace.Sample},
+function internochron(run::Vector{KJ.Sample},
                       method::AbstractString,
                       channels::AbstractDict,
                       blank::AbstractDataFrame,
@@ -84,7 +84,7 @@ function internochron(run::Vector{Plasmatrace.Sample},
     out = DataFrame(t=fill(0.0,ns),st=fill(0.0,ns),
                     y0=fill(0.0,ns),sy0=fill(0.0,ns))
     for (i, samp) in enumerate(run)
-        P, D, d = Plasmatrace.atomic(samp,channels,blank,pars)
+        P, D, d = KJ.atomic(samp,channels,blank,pars)
         x0, y0, E = internochron(P,D,d;numerical=numerical)
         out.t[i], out.st[i] = x0y02t(x0,y0,E,method)
         out.y0[i] = y0
@@ -107,7 +107,7 @@ end
 function x02t(x0::AbstractFloat,
               sx0::AbstractFloat,
               method::AbstractString)
-    lambda = Plasmatrace._PT["lambda"][method][1]
+    lambda = KJ._KJ["lambda"][method][1]
     R = 1/x0
     sR = R * sx0/x0
     t = log(1+R)/lambda
@@ -146,9 +146,9 @@ function TWjacobian(t,x0,y0,E)
 end
 
 function UPb_helper()
-    L5 = Plasmatrace._PT["lambda"]["U235-Pb207"][1]
-    L8 = Plasmatrace._PT["lambda"]["U238-Pb206"][1]
-    fUPb = Plasmatrace._PT["iratio"]["U-Pb"]
+    L5 = KJ._KJ["lambda"]["U235-Pb207"][1]
+    L8 = KJ._KJ["lambda"]["U238-Pb206"][1]
+    fUPb = KJ._KJ["iratio"]["U-Pb"]
     U58 = fUPb.U235/fUPb.U238
     return L5, L8, U58
 end

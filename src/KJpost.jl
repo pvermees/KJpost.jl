@@ -1,6 +1,6 @@
-module PTpost
+module KJpost
 
-import Plasmatrace, Statistics, Optim, Plots, ForwardDiff, Gtk4, CSV
+import KJ, Statistics, Optim, Plots, ForwardDiff, Gtk4, CSV
 using Infiltrator, LinearAlgebra, DataFrames
 
 include("main.jl")

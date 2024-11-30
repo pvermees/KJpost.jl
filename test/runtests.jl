@@ -1,7 +1,7 @@
-using Plasmatrace, PTpost, Test, Infiltrator, CSV
+using KJ, KJpost, Test, Infiltrator, CSV
 
-function PTguiTest()
-    PT(PTpost;logbook="test.log")
+function KJguiTest()
+    TUI(KJpost;logbook="test.log")
 end
 
 function LuHfHelper()
@@ -21,7 +21,7 @@ function InternochronTest()
     myrun, method, channels, blk, fit = LuHfHelper()
     P, D, d = atomic(myrun[1],channels,blk,fit)
     x0, y0, E = internochron(P,D,d)
-    p = PTpost.plot(x0,y0,E,P,D,d,method;markercolor=:white)
+    p = KJpost.plot(x0,y0,E,P,D,d,method;markercolor=:white)
     @test display(p) != NaN
 end
 
@@ -40,18 +40,18 @@ function UPbTest()
     myrun, method, channels, blk, fit = UPbHelper()
     P, D, d = atomic(myrun[7],channels,blk,fit)
     x0, y0, E = internochron(P,D,d)
-    p = PTpost.plot(x0,y0,E,P,D,d,method;
+    p = KJpost.plot(x0,y0,E,P,D,d,method;
                     markercolor=:white)
     @test display(p) != NaN
 end
 
 function CSVtest()
     myrun, method, channels, blk, fit = UPbHelper()
-    tab = PTpost.internochron(myrun,method,channels,blk,fit)
+    tab = KJpost.internochron(myrun,method,channels,blk,fit)
     CSV.write("internochron.csv",tab)
 end
 
-@testset "PT test" begin PTguiTest() end
+@testset "KJ test" begin KJguiTest() end
 @testset "Internochron test" begin InternochronTest() end
 @testset "UPb test" begin UPbTest() end
 @testset "CSV test" begin CSVtest() end

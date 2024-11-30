@@ -35,10 +35,10 @@ function plot(x0,y0,E,
               nsigma = 2,
               plot_options...)
     t,st = x0y02t(x0,y0,E,method)
-    Pname,Dname,dname = Plasmatrace.getPDd(method)
+    Pname,Dname,dname = KJ.getPDd(method)
     xlab = Pname * "/" * Dname
     ylab = dname * "/" * Dname
-    p = PTpost.plot(x0,y0,E,P,D,d;
+    p = KJpost.plot(x0,y0,E,P,D,d;
                     xlim=xlim,ylim=ylim,legend=legend,nsigma=nsigma,
                     xlab=xlab,ylab=ylab,plot_options...)
     sdig = 2

@@ -1,12 +1,13 @@
-# PTpost.jl
+# KJpost.jl
 
-## Post-processing functions for Plasmatrace
+## Post-processing functions for KJ
 
-Plasmatrace is a free and open data reduction software package for
-LA-ICP-MS written in [Julia](https://julialang.org/). PTpost is an
-extension that adds post-processing functionality to Plasmatrace.  At
-the moment this is limited to internal-isochron regression. Further
-functions will be added in the future.
+[KJ](https://github.com/pvermees/KJ.jl) is a free and open data
+reduction software package for LA-ICP-MS written in
+[Julia](https://julialang.org/). KJpost is an extension that adds
+post-processing functionality to KJ.  At the moment this is limited to
+internal-isochron regression. Further functions will be added in the
+future.
 
 ## Installation
 
@@ -14,18 +15,18 @@ Enter the following commands at the Julia console (a.k.a REPL):
 
 ```
 import Pkg
-Pkg.add(url="https://github.com/pvermees/Plasmatrace.jl.git")
-Pkg.add(url="https://github.com/pvermees/PTpost.jl.git")
+Pkg.add(url="https://github.com/pvermees/KJ.jl.git")
+Pkg.add(url="https://github.com/pvermees/KJpost.jl.git")
 ```
 
 ## Minimal working example
 
 ```
-julia> using Plasmatrace, PTpost
-julia> PT(PTpost)
--------------------
- Plasmatrace 0.7.4
--------------------
+julia> using KJ, KJpost
+julia> KJ(KJpost)
+----------
+ KJ 0.0.1
+----------
 
 r: Read data files[*]
 m: Specify the method[*]
